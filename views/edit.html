@@ -1,0 +1,66 @@
+{{ extend './layout/main.html'}}
+{{ block 'content'}}
+
+
+        <form id="form" method="post" action="/">
+            <div class="form-group">
+                <label for="">歌曲标题</label>
+                <input type="text" name="title" class="form-control" placeholder="编辑歌曲标题">
+            </div>
+            <div class="form-group">
+                <label for="">歌曲时长</label>
+                <input type="text" name="time" class="form-control" placeholder="编辑歌曲时长">
+            </div>
+            <div class="form-group">
+                <label for="">歌手</label>
+                <input type="text" name="singer" class="form-control" placeholder="编辑歌手姓名">
+            </div>
+            <div class="form-group">
+                <label for="">歌曲文件</label>
+                <input type="file" name="file">
+                <p class="help-block">请上传歌曲文件</p>
+            </div>
+            <div class="form-group">
+                <label for="">歌词文件</label>
+                <input type="file" name="filelrc">
+                <p class="help-block">请上传歌词文件</p>
+            </div>
+            <button type="submit" class="btn btn-success">编辑完成</button>
+        </form>
+    </div>
+
+<script>
+  $('#form').on('submit',function(e) {
+    e.preventDefault();
+    var fd = new FormData();
+    var inputs = document.querySelectorAll('input');
+    fd.append('title',inputs[0].value);
+    fd.append('time',inputs[1].value);
+    fd.append('singer',inputs[2].value);
+    //type=‘file’ value 就是文件路径
+    fd.append('file',inputs[3].files[0]);
+    fd.append('filelrc',inputs[4].files[0]);
+
+    $.ajax({
+      type:'post',
+      url:'/music/edit-music',
+      data:fd,
+
+      processData:false,
+      contentType:false,
+
+      dataType:'json',
+      success:function (data) {
+        if (data.code === '001') {
+          if(confirm('编辑成功！是否去听歌？')) {
+            location.href = '/music/index';
+          }
+        }else{
+          alert(data.msg);
+        }
+      }
+    })
+ });
+</script>
+
+{{/block}}
